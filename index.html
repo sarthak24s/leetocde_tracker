@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>LeetCode Tracker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>My LeetCode Problem Tracker</h1>
+
+        <form id="problemForm">
+            <input type="text" id="problemName" placeholder="Problem Name" required>
+            <input type="url" id="solutionLink" placeholder="Solution Link" required>
+            <input type="date" id="dateSolved" required>
+            <button type="submit">Add Problem</button>
+        </form>
+
+        <table id="problemsTable">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Problem Name</th>
+                    <th>Solution Link</th>
+                    <th>Date Solved</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
