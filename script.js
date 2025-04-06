@@ -1,12 +1,10 @@
-let count = 1;
-
-// Load existing problems from localStorage when the page loads
+// Load problems when page loads
 window.addEventListener('load', () => {
     const storedProblems = JSON.parse(localStorage.getItem('leetcodeProblems')) || [];
-    storedProblems.forEach(problem => addRowToTable(problem, false));
+    renderTable(storedProblems);
 });
 
-// Add event listener for form submission
+// Handle form submission
 document.getElementById('problemForm').addEventListener('submit', function (e) {
     e.preventDefault();
 
@@ -15,40 +13,37 @@ document.getElementById('problemForm').addEventListener('submit', function (e) {
     const date = document.getElementById('dateSolved').value;
 
     const problem = { name, link, date };
-    addRowToTable(problem, true);
 
-    // Clear form
+    const stored = JSON.parse(localStorage.getItem('leetcodeProblems')) || [];
+    stored.push(problem);
+    localStorage.setItem('leetcodeProblems', JSON.stringify(stored));
+
+    renderTable(stored);
+
     document.getElementById('problemForm').reset();
 });
 
-function addRowToTable(problem, saveToStorage) {
-    const table = document.getElementById('problemsTable').getElementsByTagName('tbody')[0];
-    const newRow = document.createElement('tr');
+// Renders the whole table
+function renderTable(problems) {
+    const tbody = document.getElementById('problemsTable').getElementsByTagName('tbody')[0];
+    tbody.innerHTML = ''; // Clear old rows
 
-    newRow.innerHTML = `
-        <td>${count}</td>
-        <td>${problem.name}</td>
-        <td><a href="${problem.link}" target="_blank">${problem.link}</a></td>
-        <td>${problem.date}</td>
-        <td><button class="delete-btn">Delete</button></td>
-    `;
+    problems.forEach((problem, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${problem.name}</td>
+            <td><a href="${problem.link}" target="_blank">${problem.link}</a></td>
+            <td>${problem.date}</td>
+            <td><button class="delete-btn">Delete</button></td>
+        `;
 
-    // Add delete event
-    newRow.querySelector('.delete-btn').addEventListener('click', () => {
-        newRow.remove(); // Remove from table
+        row.querySelector('.delete-btn').addEventListener('click', () => {
+            const updated = problems.filter((_, i) => i !== index);
+            localStorage.setItem('leetcodeProblems', JSON.stringify(updated));
+            renderTable(updated); // Refresh the table
+        });
 
-        let stored = JSON.parse(localStorage.getItem('leetcodeProblems')) || [];
-        stored = stored.filter(p => !(p.name === problem.name && p.date === problem.date));
-        localStorage.setItem('leetcodeProblems', JSON.stringify(stored));
+        tbody.appendChild(row);
     });
-
-    table.appendChild(newRow);
-
-    if (saveToStorage) {
-        let stored = JSON.parse(localStorage.getItem('leetcodeProblems')) || [];
-        stored.push(problem);
-        localStorage.setItem('leetcodeProblems', JSON.stringify(stored));
-    }
-
-    count++;
 }
